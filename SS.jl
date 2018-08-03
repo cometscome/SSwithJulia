@@ -2,8 +2,8 @@ include("shiftedCG.jl")
 
 module SS
     import shiftedcg
-    function eigensystem(mat_H,N,ρ,γ,α=0.1,L0=10,Nq=128,M=8,κ=2,δ=1e-14,numr = 0,cg=true) #for hermitian matrix
-        hatV = zeros(Complex64,N,L0)
+    function eigensystem(mat_H,N,ρ,γ,α=0.1,L0=10,Nq=64,M=10,κ=2,δ=1e-14,numr = 0,cg=true) #for hermitian matrix
+        hatV = zeros(Complex128,N,L0)
         hatV = rand([-1.0,1.0],N,L0) #each element should be -1 or 1
         println("Estimating number of eigenvalues...")
         println("------------------------------------------------------------")
@@ -33,7 +33,7 @@ module SS
         end
        
     
-        vec_s0 = zeros(Complex64,N,L0)
+        vec_s0 = zeros(Complex128,N,L0)
         vec_s0[1:N,1:L0] = vec_Sk[1:N,1:L0]
         mst = calc_msinEq26(vec_s0,hatV,L0)
     
@@ -46,7 +46,7 @@ module SS
         println("Calculating eigenvalues and eigenvectors...")
         println("------------------------------------------------------------")    
 
-        hatV = zeros(Complex64,N,L)
+        hatV = zeros(Complex128,N,L)
         hatV = rand(N,L)*2.0-1.0 #each element should be in (-1,1)     
     
         ε,vec_x,ms = calc_SS(hatV,mat_H,N,ρ,γ,α,L,Nq,M,δ,cg)
@@ -118,7 +118,7 @@ module SS
             end
         end
         ms = j
-        mat_Q = zeros(Complex64,N,ms)
+        mat_Q = zeros(Complex128,N,ms)
         mat_Q[1:N,1:ms] = U[1:N,1:ms]
     
     
@@ -133,9 +133,9 @@ module SS
 
 
     function calc_SkinEq22(hatV,mat_H,N,ρ,γ,α,L,Nq,M,cg)
-        vec_z = zeros(Complex64,Nq)
-        vec_w = zeros(Complex64,Nq)
-        vec_Sk = zeros(Complex64,N,L*M)
+        vec_z = zeros(Complex128,Nq)
+        vec_w = zeros(Complex128,Nq)
+        vec_Sk = zeros(Complex128,N,L*M)
         conv = true
         for j in 1:Nq
             θj = (2π/Nq)*(j-1/2)
@@ -166,7 +166,7 @@ module SS
     end
 
     function directsolver(mat_A,N,b,vec_z,Nq)      
-        vec_y = zeros(Complex64,N,Nq)
+        vec_y = zeros(Complex128,N,Nq)
         mat_X = spzeros(N,N)
         mat_I = speye(N,N)
         for j in 1:Nq
