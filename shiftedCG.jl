@@ -1,4 +1,9 @@
-module shiftedcg
+module Shifted_cg
+    export solve
+    if v"0.6.9" <= VERSION #The version of Julia is higher than 0.6.9
+        using Distributed
+        using SparseArrays
+    end
     function solve(mat_A,n,b,vec_σ,N,eps=1e-12)
         println("--------------------------------------------------------")
         println("Solving linear equations with the shifted CG method...")
@@ -28,7 +33,8 @@ module shiftedcg
 #        println(eps)
 #        println(hi)
         while abs(hi) > eps
-            Ap = mat_A*p
+            A_mul_B!(Ap,mat_A,p)
+            #Ap = mat_A*p
             pAp = p'*Ap
             rr = r'*r
             αk = rr/pAp
@@ -38,14 +44,19 @@ module shiftedcg
             p = r + βk*p
             for j in 1:N
                 ρkj = ρ0[j]
+                
+                if abs(ρkj) < eps
+                    continue
+                end
+                #ρp[j] = ifelse(abs(ρkj) > eps,ρkj*ρkmj*αm/(ρkmj*αm*(1.0+αk*vec_σ[j])+αk*βm*(ρkmj-ρkj)),ρkj)
+                #αkj = ifelse(abs(ρkj) > eps,(ρp[j]/ρkj)*αk,0.0)
                 ρkmj =ρm[j]
-                ρp[j] = ifelse(abs(ρkj) > eps,ρkj*ρkmj*αm/(ρkmj*αm*(1.0+αk*vec_σ[j])+αk*βm*(ρkmj-ρkj)),ρkj)
-                αkj = ifelse(abs(ρkj) > eps,(ρp[j]/ρkj)*αk,0.0)
-
-
+                ρp[j] = ρkj*ρkmj*αm/(ρkmj*αm*(1.0+αk*vec_σ[j])+αk*βm*(ρkmj-ρkj))
+                αkj = (ρp[j]/ρkj)*αk
                 vec_x[:,j] = vec_x[:,j]+αkj*vec_p[:,j]
                 βkj = (ρp[j]/ρkj)^2*βk
-                vec_p[:,j] = ifelse(abs(ρkj) > eps,ρp[j]*r+βkj*vec_p[:,j],vec_p[:,j])
+                vec_p[:,j] = ρp[j]*r+βkj*vec_p[:,j]
+                #vec_p[:,j] = ifelse(abs(ρkj) > eps,ρp[j]*r+βkj*vec_p[:,j],vec_p[:,j])
 
             end
 

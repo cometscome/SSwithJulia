@@ -1,5 +1,30 @@
-@everywhere include("SS_p.jl")
-@everywhere import SS
+#println(VERSION)
+
+#If the version of Julia is OLDER than 0.6.9, comment out "using Distributed"
+using Distributed
+#----------------------------------------------------------------------------
+
+
+if v"0.6.9" <= VERSION  #The version of Julia is higher than 0.6.9
+    using InteractiveUtils    
+    @everywhere using SparseArrays
+    @everywhere using LinearAlgebra
+    @everywhere include("SS_p.jl")
+    @everywhere import .SS
+    @everywhere using Random
+    Random.seed!(1234)
+else #The version of Julia is older than 0.6.9
+    
+    @everywhere include("SS_p.jl")
+    @everywhere import SS 
+    srand(1234)
+end
+versioninfo()
+
+
+
+
+
 
 
 
@@ -165,8 +190,8 @@ end
 
 
 @everywhere function main()
-    Nx = 12
-    Ny = 12
+    Nx = 24
+    Ny = 24
 
     
     ρ = 0.2
@@ -182,7 +207,12 @@ end
     rε = Float64[]
     if N <= 8192
         println("Doing the full diagonalization...")
-        @time ε,vec_w = eig(full(mat_H))
+        if v"0.6.9" <= VERSION
+            @time ε,vec_w = eigen(Matrix(mat_H))
+        else
+            @time ε,vec_w = eig(full(mat_H))
+        end
+        
         println("Done")
         
 
@@ -239,7 +269,7 @@ end
 
 #    plot(integers[1:N],ε[1:N],label="Original")      
     
-    return rε,eigenvalues,residuals,eigenvectors,num
+     return rε,eigenvalues,residuals,eigenvectors,num
 
     
 end    
