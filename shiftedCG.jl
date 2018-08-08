@@ -33,8 +33,7 @@ module Shifted_cg
 #        println(eps)
 #        println(hi)
         while abs(hi) > eps
-            A_mul_B!(Ap,mat_A,p)
-            #Ap = mat_A*p
+            Ap = mat_A*p
             pAp = p'*Ap
             rr = r'*r
             αk = rr/pAp
