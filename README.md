@@ -1,5 +1,5 @@
 # SSwithJulia
-[08/08/18] The code works with Julia Version 1.0.0-rc1.0. 
+[08/09/18] The code works with Julia Version 1.0.0. 
 
 
 Sakurai-Sugiura method to obtain the eigenvalues located in a given domain with Julia 0.6.4. See, T. Sakurai and H. Sugiura: J. Comput. Appl. Math. 159 (2003) 119. and "Numerical Construction of a Low-Energy Effective Hamiltonian in a Self-Consistent Bogoliubov–de Gennes Approach of Superconductivity", Yuki Nagai et al., J. Phys. Soc. Jpn. 82, 094701 (2013) or arXiv:1303.3683 
